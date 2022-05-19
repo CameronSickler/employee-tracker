@@ -26,8 +26,8 @@ first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
 role_id INTEGER,
 manager_id INTEGER,
-PRIMARY KEY (id, manager_id),
-FOREIGN KEY (roles_id) REFERENCES role(id)
+PRIMARY KEY (id),
+FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
 -- make sure foreign and primary keys are linked as shown in mockup
