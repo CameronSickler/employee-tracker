@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS employee;
 
 
 -- create tables here
-
 CREATE TABLE department (
 id INTEGER AUTO_INCREMENT,
 name VARCHAR(30) NOT NULL,
@@ -30,3 +29,6 @@ manager_id INTEGER,
 PRIMARY KEY (id, manager_id),
 FOREIGN KEY (roles_id) REFERENCES role(id)
 );
+
+-- make sure foreign and primary keys are linked as shown in mockup
+-- verify tables are constructed properly as shown in challenge desc
