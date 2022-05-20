@@ -1,5 +1,6 @@
 // get the client
 const mysql = require('mysql2');
+const inquirer = require('inquirer');
 
 // create the connection to database
 const connection = mysql.createConnection({
@@ -21,7 +22,6 @@ const questions = [{
         'view all departments',
         'view all roles',
         'view all employees',
-        // the remaining options are bonus? confirm w/ tutor
         'add a department',
         'add a role',
         'add an employee',
@@ -30,22 +30,133 @@ const questions = [{
 }]
 
 
-function init() {
+function viewAllDepts() {
 
+    console.log('we made it to view all depts function')
+    const sql = `SELECT * FROM departments;`;
+
+    //this was code pulled from module not sure if this is what to use?
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+
+            return;
+        }
+
+        console.log(rows);
+
+    });
+
+}
+
+function viewAllRoles() {
+
+    console.log('we made it to view all roles function')
+    const sql = `SELECT * FROM roles;`;
+
+    //this was code pulled from module not sure if this is what to use?
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+
+            return;
+        }
+
+        console.log(rows);
+
+    });
+
+}
+
+function viewAllEmpls() {
+
+    console.log('we made it to view all employees function')
+    const sql = `SELECT * FROM employees;`;
+
+    //this was code pulled from module not sure if this is what to use?
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+
+            return;
+        }
+
+        console.log(rows);
+
+    });
+
+}
+
+// function init() {
+
+//     inquirer.prompt(questions)
+//         .then(answers => {
+
+//             console.log('we made it just before the switch');
+//             console.log('here is the answers.mainMenu log ' + answers.mainMenu);
+
+
+//             switch (answers.mainMenu) {
+
+//                 // cases here
+//                 case 'view all departments':
+//                     viewAllDepts();
+//                     break;
+
+//                 case 'view all roles':
+//                     viewAllRoles();
+//                     break;
+
+//                 case 'view all employees':
+//                     viewAllEmpls();
+//                     break;
+//             };
+
+
+//             // i could inject a function call to another js file here if I want
+//             // using require and module.export. Not neccessary though
+//             // let content = generateTables(answers)
+
+//         });
+
+// };
+
+
+function init() {
 
     inquirer.prompt(questions)
         .then(answers => {
 
+            console.log('we made it just before the switch');
+            console.log('here is the answers.mainMenu log ' + answers.mainMenu);
 
-            let content = generateTables(answers)
+
+            switch (answers.mainMenu) {
+
+                // cases here
+                case 'view all departments':
+                    viewAllDepts();
+                    break;
+
+                case 'view all roles':
+                    viewAllRoles();
+                    break;
+
+                case 'view all employees':
+                    viewAllEmpls();
+                    break;
+            };
 
 
-            // Create a function to write over the sql file? and run it somehow?
-            fs.writeFile('name of sql file here', content, err => {
-                if (err) throw err
-                console.log('File saved!')
-            })
+            // i could inject a function call to another js file here if I want
+            // using require and module.export. Not neccessary though
+            // let content = generateTables(answers)
+
         });
-}
+
+};
+
+
+
 
 init();

@@ -1,34 +1,32 @@
 -- drop table commands here
-DROP TABLE IF EXISTS department;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS employee;
+DROP TABLE IF EXISTS departments;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS employees;
 
 
 -- create tables here
-CREATE TABLE department (
+CREATE TABLE departments (
 id INTEGER AUTO_INCREMENT,
 name VARCHAR(30) NOT NULL,
 PRIMARY KEY (id)
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
 id INTEGER AUTO_INCREMENT,
 title VARCHAR(30) NOT NULL,
 salary DECIMAL,
 department_id INTEGER,
 PRIMARY KEY (id),
-FOREIGN KEY (department_id) REFERENCES department(id)
+FOREIGN KEY (department_id) REFERENCES departments(id)
 );
 
-CREATE TABLE employee (
+CREATE TABLE employees (
 id INTEGER AUTO_INCREMENT,
 first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
-role_id INTEGER,
+role_id INTEGER NOT NULL,
 manager_id INTEGER,
 PRIMARY KEY (id),
-FOREIGN KEY (role_id) REFERENCES role(id)
+FOREIGN KEY (role_id) REFERENCES roles(id),
+FOREIGN KEY (manager_id) REFERENCES employees(id)
 );
-
--- make sure foreign and primary keys are linked as shown in mockup
--- verify tables are constructed properly as shown in challenge desc

@@ -1,29 +1,26 @@
 
 
-function generateTables(answers) {
+// function generateTables(answers) {
 
-    //can I use dot notation here?
-    if (answers.mainMenu === 'view all departments') {
+//     //can I use dot notation here?
+//     if (answers.mainMenu === 'view all departments') {
 
-        const sql = `SELECT * departments`;
+//         const sql = `SELECT * departments`;
 
-        return sql;
-        //is this enough?
+//         //this was code pulled from module not sure if this is what to use?
+//         db.query(sql, (err, rows) => {
+//             if (err) {
+//                 console.log(err);
 
-        //this was code pulled from module not sure if this is what to use?
-        db.query(sql, (err, rows) => {
-            if (err) {
-                res.status(500).json({ error: err.message });
-                return;
-            }
-            res.json({
-                message: 'success',
-                data: rows
-            });
-        });
+//                 return;
+//             }
 
-    }
+//             console.log(rows);
 
-    //would have a bunch of else if statements for other options here
+//         });
 
-}
+//     }
+
+//     //would have a bunch of else if statements for other options here
+
+// };

@@ -1,30 +1,27 @@
-INSERT INTO department (name)
+INSERT INTO departments (id, name)
 VALUES
-('Sales'),
-('Engineering'),
-('Finance'),
-('Legal');
+(1, 'Sales'),
+(2, 'Engineering'),
+(3, 'Finance'),
+(4, 'Legal');
 
-INSERT INTO role (title, salary)
+INSERT INTO roles (id, title, salary, department_id)
 VALUES
-('Salesperson', '80000'),
-('Lead Engineer', '150000'),
-('Software Engineer', '120000'),
-('Account Manager', '160000'),
-('Accountant', '125000'),
-('Legal Team Lead', '250000'),
-('Lawyer', '190000');
+(1, 'Salesperson', '80000', 1),
+(2, 'Lead Engineer', '150000', 2),
+(3, 'Software Engineer', '120000', 2),
+(4, 'Account Manager', '160000', 3),
+(5, 'Accountant', '125000', 3),
+(6, 'Legal Team Lead', '250000', 4),
+(7, 'Lawyer', '190000', 4);
 
-INSERT INTO employee (first_name, last_name)
+INSERT INTO employees (id, first_name, last_name, role_id, manager_id)
 VALUES
-('Mike', 'Jones'),
-('Sara', 'Thomas'),
-('David', 'White'),
-('Angie', 'Greene'),
-('Taylor', 'Johnson'),
-('Kyle', 'Erickson'),
-('Cody', 'Nickels'),
-('Ashley', 'Francis');
-
---confirm if this is needed or
---if inserted data will be gathered/created using inquirer
+(1, 'Mike', 'Jones', 4, NULL),
+(2, 'Sara', 'Thomas', 1, NULL),
+(3, 'David', 'White', 1, NULL),
+(4, 'Angie', 'Greene', 3, NULL),
+(5, 'Taylor', 'Johnson', 6, NULL),
+(6, 'Kyle', 'Erickson', 5, 1),
+(7, 'Cody', 'Nickels', 7, NULL),
+(8, 'Ashley', 'Francis', 2, NULL);
