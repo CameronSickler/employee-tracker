@@ -10,8 +10,6 @@ const connection = mysql.createConnection({
     database: 'employee_tracker'
 });
 
-
-
 //const variables for housing inquier questions
 const menuQuestions = [{
     type: 'list',
@@ -27,13 +25,11 @@ const menuQuestions = [{
         'update an employee role',
         'quit']
 }]
-
 const addDeptQuestions = [{
     type: 'input',
     name: 'newDept',
     message: 'What is the name of the department you wish to add?',
 }]
-
 const addRoleQuestions = [{
     type: 'input',
     name: 'newRoleTitle',
@@ -49,7 +45,6 @@ const addRoleQuestions = [{
     name: 'newRoleDept',
     message: 'What is the department for the new role?',
 }]
-
 const addEmplQuestions = [{
     type: 'input',
     name: 'newEmplFirstName',
@@ -70,8 +65,10 @@ const addEmplQuestions = [{
     name: 'newEmplDept',
     message: 'What is the department of the new employee?',
 }]
-
 const updateEmplQuestions = []
+
+
+
 
 
 
@@ -128,15 +125,21 @@ function viewAllEmpls() {
 
 }
 
+
+
+
+
 function addDept() {
 
     inquirer.prompt(addDeptQuestions)
         .then(answers => {
 
             // should add name of department
-            const sql = `SELECT * FROM departments;`;
+            // const sql = `INSERT INTO departments (name) VALUES ('${answers.newDept}');`;
+            const sql = `INSERT INTO departments (name) VALUES (?)`;
+            params = [answers.newDept];
 
-            connection.query(sql, (err, rows) => {
+            connection.query(sql, params, (err, rows) => {
                 if (err) {
                     console.log(err);
 
