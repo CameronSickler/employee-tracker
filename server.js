@@ -10,10 +10,9 @@ const connection = mysql.createConnection({
     database: 'employee_tracker'
 });
 
-// discuss how much js I should expect to complete this project
-// when compared to the module
 
 
+// main menu question used by inquirer within the init function
 const questions = [{
     type: 'list',
     name: 'mainMenu',
@@ -30,6 +29,7 @@ const questions = [{
 }]
 
 
+// functions responsible for displaying table data in terminal
 function viewAllDepts() {
 
     console.log('we made it to view all depts function')
@@ -87,41 +87,19 @@ function viewAllEmpls() {
 
 }
 
-// function init() {
+function addDept() { }
 
-//     inquirer.prompt(questions)
-//         .then(answers => {
+function addRole() { }
 
-//             console.log('we made it just before the switch');
-//             console.log('here is the answers.mainMenu log ' + answers.mainMenu);
+function addEmpl() { }
 
+function updateEmpl() { }
 
-//             switch (answers.mainMenu) {
-
-//                 // cases here
-//                 case 'view all departments':
-//                     viewAllDepts();
-//                     break;
-
-//                 case 'view all roles':
-//                     viewAllRoles();
-//                     break;
-
-//                 case 'view all employees':
-//                     viewAllEmpls();
-//                     break;
-//             };
+function quit() { }
 
 
-//             // i could inject a function call to another js file here if I want
-//             // using require and module.export. Not neccessary though
-//             // let content = generateTables(answers)
 
-//         });
-
-// };
-
-
+// initial function to begin inquirer prompts
 function init() {
 
     inquirer.prompt(questions)
@@ -130,10 +108,10 @@ function init() {
             console.log('we made it just before the switch');
             console.log('here is the answers.mainMenu log ' + answers.mainMenu);
 
-
+            // switch to display selected changes in terminal
             switch (answers.mainMenu) {
 
-                // cases here
+
                 case 'view all departments':
                     viewAllDepts();
                     break;
@@ -145,12 +123,27 @@ function init() {
                 case 'view all employees':
                     viewAllEmpls();
                     break;
+
+                case 'add a department':
+                    addDept();
+                    break;
+
+                case 'add a role':
+                    addRole();
+                    break;
+
+                case 'add an employee':
+                    addEmpl();
+                    break;
+
+                case 'update an employee role':
+                    updateEmpl();
+                    break;
+
+                case 'quit':
+                    quit();
+                    break;
             };
-
-
-            // i could inject a function call to another js file here if I want
-            // using require and module.export. Not neccessary though
-            // let content = generateTables(answers)
 
         });
 
@@ -158,5 +151,5 @@ function init() {
 
 
 
-
+// function call to begin application
 init();
