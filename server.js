@@ -87,15 +87,30 @@ function viewAllEmpls() {
 
 }
 
-function addDept() { }
+function addDept() {
+    // should add name of department
+    console.log('made it')
+}
 
-function addRole() { }
+function addRole() {
+    // should add name, salary, department
+    console.log('made it')
+}
 
-function addEmpl() { }
+function addEmpl() {
+    // should add firstname, lastname, role, and manager
+    console.log('made it')
+}
 
-function updateEmpl() { }
+function updateEmpl() {
+    // select employee, update role, and repopulate database
+    console.log('made it')
+}
 
-function quit() { }
+function quit() {
+
+    console.log('Thank you for using the employee tracker, goodbye.')
+}
 
 
 
