@@ -78,7 +78,6 @@ const updateEmplQuestions = []
 // functions responsible for displaying table data in terminal
 function viewAllDepts() {
 
-    console.log('we made it to view all depts function')
     const sql = `SELECT * FROM departments;`;
 
     //this was code pulled from module not sure if this is what to use?
@@ -130,23 +129,91 @@ function viewAllEmpls() {
 }
 
 function addDept() {
-    // should add name of department
-    console.log('made it')
+
+    inquirer.prompt(addDeptQuestions)
+        .then(answers => {
+
+            // should add name of department
+            const sql = `SELECT * FROM departments;`;
+
+            connection.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err);
+
+                    return;
+                }
+
+                console.log(rows);
+                init();
+            });
+
+        });
 }
 
 function addRole() {
-    // should add name, salary, department
-    console.log('made it')
+
+    inquirer.prompt(addRoleQuestions)
+        .then(answers => {
+
+            // should add name, salary, department
+            const sql = `SELECT * FROM departments;`;
+
+            connection.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err);
+
+                    return;
+                }
+
+                console.log(rows);
+                init();
+            });
+
+        });
 }
 
 function addEmpl() {
-    // should add firstname, lastname, role, and manager
-    console.log('made it')
+
+    inquirer.prompt(addEmplQuestions)
+        .then(answers => {
+
+            // should add firstname, lastname, role, and manager
+            const sql = `SELECT * FROM departments;`;
+
+            connection.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err);
+
+                    return;
+                }
+
+                console.log(rows);
+                init();
+            });
+
+        });
 }
 
 function updateEmpl() {
-    // select employee, update role, and repopulate database
-    console.log('made it')
+
+    inquirer.prompt(updateEmplQuestions)
+        .then(answers => {
+
+            // select employee, update role, and repopulate database
+            const sql = `SELECT * FROM departments;`;
+
+            connection.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err);
+
+                    return;
+                }
+
+                console.log(rows);
+                init();
+            });
+
+        });
 }
 
 function quit() {
