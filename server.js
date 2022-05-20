@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'Root',
-    database: 'test'
+    database: 'employee_tracker'
 });
 
 // discuss how much js I should expect to complete this project
@@ -36,7 +36,7 @@ function viewAllDepts() {
     const sql = `SELECT * FROM departments;`;
 
     //this was code pulled from module not sure if this is what to use?
-    db.query(sql, (err, rows) => {
+    connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
 
@@ -55,7 +55,7 @@ function viewAllRoles() {
     const sql = `SELECT * FROM roles;`;
 
     //this was code pulled from module not sure if this is what to use?
-    db.query(sql, (err, rows) => {
+    connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
 
@@ -74,7 +74,7 @@ function viewAllEmpls() {
     const sql = `SELECT * FROM employees;`;
 
     //this was code pulled from module not sure if this is what to use?
-    db.query(sql, (err, rows) => {
+    connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
 
