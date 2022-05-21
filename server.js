@@ -35,7 +35,8 @@ const addDeptQuestions = [{
 }]
 
 
-// global variables that are updated and used for populating inquirer question choices
+// global variables that are updated 
+//and used for populating inquirer question choices
 var addRoleDepartmentID = 0;
 
 var addEmplRoleID = 0;
@@ -113,7 +114,7 @@ function addDept() {
                 }
 
                 console.log(rows);
-                init();
+                viewAllDepts();
             });
         });
 }
