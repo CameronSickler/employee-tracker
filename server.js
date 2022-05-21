@@ -34,36 +34,13 @@ const addDeptQuestions = [{
     message: 'What is the name of the department you wish to add?',
 }]
 
+
+// global variables that are updated and used for populating inquirer question choices
 var addRoleDepartmentID = 0;
 
-const addEmplQuestions = [{
-    type: 'input',
-    name: 'newEmplFirstName',
-    message: 'What is the first name of the new employee?',
-},
-{
-    type: 'input',
-    name: 'newEmplLastName',
-    message: 'What is the last name of the new employee?',
-},
-{
-    type: 'input',
-    name: 'newEmplRole',
-    message: 'What is the role of the new employee?',
-},
-{
-    type: 'input',
-    name: 'newEmplDept',
-    message: 'What is the department of the new employee?',
-}]
+var addEmplRoleID = 0;
 
-//There are two nested inquirer prompts in the updateEmpl function
-//The udateEmpl function pushes a value to the updateEmplID variable and is then used later in that function
 var updateEmplID = 0;
-
-
-
-
 
 
 // BEGIN functions
@@ -126,7 +103,7 @@ function addDept() {
         .then(answers => {
 
             // add new department
-            const sql = `INSERT INTO departments (name) VALUES (?)`;
+            const sql = `INSERT INTO departments (names) VALUES (?)`;
             params = [answers.newDept];
 
             connection.query(sql, params, (err, rows) => {
@@ -193,27 +170,57 @@ function addRole() {
     });
 };
 
-
 //add an employee
 function addEmpl() {
 
-    inquirer.prompt(addEmplQuestions)
-        .then(answers => {
+    //const for database
+    const sql = `SELECT * FROM roles;`;
 
-            // should add firstname, lastname, role, and manager
-            const sql = `INSERT INTO roles (first_name, last_name, role_id, department_id) VALUES (?,?,?,?)`;
-            const params = [answers.newEmplFirstName, answers.newEmplLastName, answers.newEmplRole, answers.newEmplDept]
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
 
-            connection.query(sql, params, (err, rows) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+        const roles = rows.map(({ id, title }) => ({ name: title, value: id }));
+        console.log(rows)
 
-                console.log(rows);
-                init();
+
+        inquirer.prompt([{
+            type: 'input',
+            name: 'newEmplFirstName',
+            message: 'What is the first name of the new employee?',
+        },
+        {
+            type: 'input',
+            name: 'newEmplLastName',
+            message: 'What is the last name of the new employee?',
+        },
+        {
+            type: 'list',
+            name: 'newEmplRole',
+            message: 'What is the role of the new employee?',
+            choices: roles
+        }])
+
+            .then(answers => {
+
+                addEmplRoleID = answers.newEmplRole
+                // should add firstname, lastname, role, and manager
+                const sql1 = `INSERT INTO employees (first_name, last_name, role_id) VALUES (?,?,?)`;
+                const params = [answers.newEmplFirstName, answers.newEmplLastName, addEmplRoleID]
+
+                connection.query(sql1, params, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    console.log(rows);
+                    viewAllEmpls();
+                });
             });
-        });
+    });
 }
 
 //update a pre-existing employee's role
