@@ -69,18 +69,8 @@ const addEmplQuestions = [{
     message: 'What is the department of the new employee?',
 }]
 
-const updateEmplQuestions = [{
-    type: 'list',
-    name: 'updateEmplChoose',
-    message: 'Which employee do you want to update?',
-    choices: []
-},
-{
-    type: 'list',
-    name: 'updateEmplRole',
-    message: 'What is the new role?',
-    choices: ['choice']
-}]
+//there are 2x more prompts nested in the updateEmpl function due to scope issues
+
 
 
 
@@ -211,6 +201,7 @@ function addEmpl() {
 // NEEDS TESTING AND WORK
 function updateEmpl() {
 
+    //queries for all employee info from db
     const sql = `SELECT * FROM employees`;
     connection.query(sql, (err, rows) => {
         if (err) {
@@ -218,9 +209,12 @@ function updateEmpl() {
 
             return;
         }
+
+        //saves an array of objects that represent employees to be used to populate choices in the following inquirer prompt
         const employees = rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
         console.log("we made it to log the employees after rows.map executes" + employees);
 
+        //prompts user to pick an employee to update and the available choices are pulled from the previous db query
         inquirer.prompt({
             type: 'list',
             name: 'updateEmplChoose',
@@ -229,6 +223,7 @@ function updateEmpl() {
         })
             .then(answers => {
 
+                //runs another db query for all roles info from db
                 console.log("we made it to the connection query for displaying roles")
                 const sql = `SELECT * FROM roles`;
                 connection.query(sql, (err, rows) => {
@@ -237,15 +232,41 @@ function updateEmpl() {
 
                         return;
                     }
+
+                    //saves an array of objects that represent roles to be used to populate choices in the following inquirer prompt
+                    const roles = rows.map(({ id, title }) => ({ name: title, value: id }));
+
                     console.log("we made it through the connection query for displaying roles as well " + answers)
                     console.log("this is the rows displayed " + rows);
-                    return
-                    // init();
-                });
 
+                    //prompts user to pick a new role for the employee using roles from previous db query
+                    inquirer.prompt({
+                        type: 'list',
+                        name: 'updateEmplRole',
+                        message: 'What is the new role?',
+                        choices: roles
+                    })
+                        .then(answers => {
+
+                            //should choose employee, update role, and repopulate table
+                            const sql = `SELECT * FROM employees`;
+                            const params = [answers.updateEmplChoose, answers.updateEmplRole]
+
+                            connection.query(sql, params, (err, rows) => {
+                                if (err) {
+                                    console.log(err);
+
+                                    return;
+                                }
+                                console.log(params);
+                                console.log(rows);
+                                return
+                                // init();
+                            });
+                        });
+                });
             });
     });
-
 }
 
 function quit() {
@@ -302,3 +323,24 @@ function init() {
 
 // function call to begin application
 init();
+
+
+
+
+ // const data = 'SELECT * FROM roles';
+        // connection.query(data, params, (err, rows) => {
+        //     if (err) {
+        //         console.log(err);
+
+        //         return;
+        //     }
+
+        //     console.log('we made it to the second prompt for roles')
+
+        //     inquirer.prompt({
+        //         type: 'list',
+        //         name: 'updateEmplRole',
+        //         message: 'What is the new role?',
+        //         choices: roles
+        //     })
+        // });
