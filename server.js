@@ -291,7 +291,11 @@ function updateEmpl() {
 //ends connection
 function quit() {
 
-    console.log('Thank you for using the employee tracker, goodbye.')
+    console.log("================================")
+    console.log("=====       Thank you      =====")
+    console.log("=====        Goodbye!      =====")
+    console.log("================================")
+
     connection.end();
 }
 
@@ -346,7 +350,15 @@ function init() {
 
 
 
+function title() {
 
+    console.log("===============================")
+    console.log("=====   Employee Tracker  =====")
+    console.log("=====      By Cameron     =====")
+    console.log("===============================")
 
-// function call to begin application
+}
+
+// function calls to begin application
+title();
 init();
