@@ -69,6 +69,8 @@ const addEmplQuestions = [{
     message: 'What is the department of the new employee?',
 }]
 
+var updateEmplID = 0;
+
 //there are 2x more prompts nested in the updateEmpl function due to scope issues
 
 
@@ -206,13 +208,11 @@ function updateEmpl() {
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
-
             return;
         }
 
         //saves an array of objects that represent employees to be used to populate choices in the following inquirer prompt
         const employees = rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
-        console.log("we made it to log the employees after rows.map executes" + employees);
 
         //prompts user to pick an employee to update and the available choices are pulled from the previous db query
         inquirer.prompt({
@@ -223,21 +223,20 @@ function updateEmpl() {
         })
             .then(answers => {
 
+                //sends the id to a global variable to be referenced later
+                updateEmplID = answers.updateEmplChoose
+                console.log("this is the updateEmplID after sending it to the global scope " + updateEmplID)
+
                 //runs another db query for all roles info from db
-                console.log("we made it to the connection query for displaying roles")
                 const sql = `SELECT * FROM roles`;
                 connection.query(sql, (err, rows) => {
                     if (err) {
                         console.log(err);
-
                         return;
                     }
 
                     //saves an array of objects that represent roles to be used to populate choices in the following inquirer prompt
                     const roles = rows.map(({ id, title }) => ({ name: title, value: id }));
-
-                    console.log("we made it through the connection query for displaying roles as well " + answers)
-                    console.log("this is the rows displayed " + rows);
 
                     //prompts user to pick a new role for the employee using roles from previous db query
                     inquirer.prompt({
@@ -248,26 +247,84 @@ function updateEmpl() {
                     })
                         .then(answers => {
 
+                            console.log("well here goes nothing  " + updateEmplID + "   " + answers.updateEmplRole)
+
                             //should choose employee, update role, and repopulate table
-                            const sql = `SELECT * FROM employees`;
-                            const params = [answers.updateEmplChoose, answers.updateEmplRole]
+                            const sql = `UPDATE employees SET role_id = (?) WHERE id = (?);`;
+                            const params = [answers.updateEmplRole, updateEmplID]
 
                             connection.query(sql, params, (err, rows) => {
                                 if (err) {
                                     console.log(err);
-
                                     return;
                                 }
-                                console.log(params);
+
                                 console.log(rows);
-                                return
-                                // init();
+                                viewAllEmpls();
                             });
                         });
                 });
             });
     });
 }
+
+
+// function updateEmpl() {
+
+//     //queries for all employee info from db
+//     const sqlEmpl = `SELECT * FROM employees`;
+//     const sqlRole = `SELECT * FROM roles`;
+
+//     connection.query(sqlEmpl, (err, rows1) => {
+//         if (err) {
+//             console.log(err);
+//             return;
+//         }
+
+//         connection.query(sqlRole, (err, rows2) => {
+//             if (err) {
+//                 console.log(err);
+//                 return;
+//             }
+
+//             const employees = rows1.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
+//             const roles = rows2.map(({ id, title }) => ({ name: title, value: id }));
+
+//             inquirer.prompt({
+//                 type: 'list',
+//                 name: 'updateEmplChoose',
+//                 message: 'Which employee do you want to update?',
+//                 choices: employees
+//             }, {
+//                 type: 'list',
+//                 name: 'updateEmplRole',
+//                 message: 'What is the new role?',
+//                 choices: roles
+//             })
+//                 .then(answers => {
+
+//                     console.log("employees " + employees)
+//                     console.log("roles " + roles)
+//                     console.log("answers " + answers)
+//                     console.log("answers.updateEmplChoos " + answers.updateEmplChoose)
+//                     console.log("answers.updateEmplRole " + answers.updateEmplRole)
+
+//                     const sqlUpdate = `SELECT * FROM employees`;
+
+//                     connection.query(sqlUpdate, (err, rows) => {
+//                         if (err) {
+//                             console.log(err);
+//                             return;
+//                         }
+
+//                         console.log(rows);
+//                         connection.end();
+//                     });
+
+//                 });
+//         });
+//     });
+// }
 
 function quit() {
 
@@ -323,24 +380,3 @@ function init() {
 
 // function call to begin application
 init();
-
-
-
-
- // const data = 'SELECT * FROM roles';
-        // connection.query(data, params, (err, rows) => {
-        //     if (err) {
-        //         console.log(err);
-
-        //         return;
-        //     }
-
-        //     console.log('we made it to the second prompt for roles')
-
-        //     inquirer.prompt({
-        //         type: 'list',
-        //         name: 'updateEmplRole',
-        //         message: 'What is the new role?',
-        //         choices: roles
-        //     })
-        // });
