@@ -125,17 +125,12 @@ function viewAllEmpls() {
 
 }
 
-
-
-
-
 function addDept() {
 
     inquirer.prompt(addDeptQuestions)
         .then(answers => {
 
-            // should add name of department
-            // const sql = `INSERT INTO departments (name) VALUES ('${answers.newDept}');`;
+            // add new department
             const sql = `INSERT INTO departments (name) VALUES (?)`;
             params = [answers.newDept];
 
@@ -149,7 +144,6 @@ function addDept() {
                 console.log(rows);
                 init();
             });
-
         });
 }
 
@@ -159,9 +153,10 @@ function addRole() {
         .then(answers => {
 
             // should add name, salary, department
-            const sql = `SELECT * FROM departments;`;
+            const sql = `INSERT INTO roles (name, salary, department_id) VALUES (?,?,?,?)`;
+            const params = [answers.newRoleTitle, answers.newRoleSalary, answers.newRoleDept]
 
-            connection.query(sql, (err, rows) => {
+            connection.query(sql, params, (err, rows) => {
                 if (err) {
                     console.log(err);
 
