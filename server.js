@@ -1,4 +1,4 @@
-// get the client
+// require variables
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
@@ -9,6 +9,8 @@ const connection = mysql.createConnection({
     password: 'Root',
     database: 'employee_tracker'
 });
+
+
 
 //const variables for housing inquier questions
 const menuQuestions = [{
@@ -32,21 +34,7 @@ const addDeptQuestions = [{
     message: 'What is the name of the department you wish to add?',
 }]
 
-const addRoleQuestions = [{
-    type: 'input',
-    name: 'newRoleTitle',
-    message: 'What is the name of the role you wish to add?',
-},
-{
-    type: 'input',
-    name: 'newRoleSalary',
-    message: 'What is the salary for the new role?',
-},
-{
-    type: 'input',
-    name: 'newRoleDept',
-    message: 'What is the department for the new role?',
-}]
+var addRoleDepartmentID = 0;
 
 const addEmplQuestions = [{
     type: 'input',
@@ -69,17 +57,18 @@ const addEmplQuestions = [{
     message: 'What is the department of the new employee?',
 }]
 
+//There are two nested inquirer prompts in the updateEmpl function
+//The udateEmpl function pushes a value to the updateEmplID variable and is then used later in that function
 var updateEmplID = 0;
 
-//there are 2x more prompts nested in the updateEmpl function due to scope issues
 
 
 
 
 
+// BEGIN functions
 
-
-// functions responsible for displaying table data in terminal
+//view all depts
 function viewAllDepts() {
 
     const sql = `SELECT * FROM departments;`;
@@ -88,16 +77,15 @@ function viewAllDepts() {
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
-
             return;
         }
 
         console.log(rows);
         init();
     });
-
 }
 
+//view all roles
 function viewAllRoles() {
 
     const sql = `SELECT * FROM roles;`;
@@ -105,7 +93,6 @@ function viewAllRoles() {
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
-
             return;
         }
 
@@ -115,6 +102,7 @@ function viewAllRoles() {
 
 }
 
+//view all employees
 function viewAllEmpls() {
 
     const sql = `SELECT * FROM employees;`;
@@ -122,7 +110,6 @@ function viewAllEmpls() {
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
-
             return;
         }
 
@@ -132,6 +119,7 @@ function viewAllEmpls() {
 
 }
 
+//add a department
 function addDept() {
 
     inquirer.prompt(addDeptQuestions)
@@ -144,7 +132,6 @@ function addDept() {
             connection.query(sql, params, (err, rows) => {
                 if (err) {
                     console.log(err);
-
                     return;
                 }
 
@@ -154,29 +141,60 @@ function addDept() {
         });
 }
 
+//add a role
 function addRole() {
 
-    inquirer.prompt(addRoleQuestions)
-        .then(answers => {
 
-            // should add name, salary, department
-            const sql = `INSERT INTO roles (name, salary, department_id) VALUES (?,?,?,?)`;
-            const params = [answers.newRoleTitle, answers.newRoleSalary, answers.newRoleDept]
+    const sql1 = `SELECT * FROM departments;`;
 
-            connection.query(sql, params, (err, rows) => {
-                if (err) {
-                    console.log(err);
+    connection.query(sql1, (err, rows) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
 
-                    return;
-                }
+        //saves local variable to populate inquirer choices for picking a department_id later
+        const departments = rows.map(({ id, names }) => ({ name: names, value: id }));
+        console.log(rows);
 
-                console.log(rows);
-                init();
+        inquirer.prompt([{
+            type: 'input',
+            name: 'newRoleTitle',
+            message: 'What is the name of the role you wish to add?'
+        }, {
+            type: 'input',
+            name: 'newRoleSalary',
+            message: 'What is the salary for the new role?'
+        }, {
+            type: 'list',
+            name: 'newRoleDept',
+            message: 'What is the department for the new role?',
+            choices: departments
+        }])
+            .then(answers => {
+
+                //push value to global scope
+                addRoleDepartmentID = answers.newRoleDept
+
+                //Inserts new role into database
+                const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
+                const params = [answers.newRoleTitle, answers.newRoleSalary, addRoleDepartmentID]
+
+                connection.query(sql, params, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    console.log(rows);
+                    viewAllRoles();
+                });
             });
+    });
+};
 
-        });
-}
 
+//add an employee
 function addEmpl() {
 
     inquirer.prompt(addEmplQuestions)
@@ -189,18 +207,16 @@ function addEmpl() {
             connection.query(sql, params, (err, rows) => {
                 if (err) {
                     console.log(err);
-
                     return;
                 }
 
                 console.log(rows);
                 init();
             });
-
         });
 }
 
-// NEEDS TESTING AND WORK
+//update a pre-existing employee's role
 function updateEmpl() {
 
     //queries for all employee info from db
@@ -225,7 +241,6 @@ function updateEmpl() {
 
                 //sends the id to a global variable to be referenced later
                 updateEmplID = answers.updateEmplChoose
-                console.log("this is the updateEmplID after sending it to the global scope " + updateEmplID)
 
                 //runs another db query for all roles info from db
                 const sql = `SELECT * FROM roles`;
@@ -247,8 +262,6 @@ function updateEmpl() {
                     })
                         .then(answers => {
 
-                            console.log("well here goes nothing  " + updateEmplID + "   " + answers.updateEmplRole)
-
                             //should choose employee, update role, and repopulate table
                             const sql = `UPDATE employees SET role_id = (?) WHERE id = (?);`;
                             const params = [answers.updateEmplRole, updateEmplID]
@@ -268,70 +281,14 @@ function updateEmpl() {
     });
 }
 
-
-// function updateEmpl() {
-
-//     //queries for all employee info from db
-//     const sqlEmpl = `SELECT * FROM employees`;
-//     const sqlRole = `SELECT * FROM roles`;
-
-//     connection.query(sqlEmpl, (err, rows1) => {
-//         if (err) {
-//             console.log(err);
-//             return;
-//         }
-
-//         connection.query(sqlRole, (err, rows2) => {
-//             if (err) {
-//                 console.log(err);
-//                 return;
-//             }
-
-//             const employees = rows1.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
-//             const roles = rows2.map(({ id, title }) => ({ name: title, value: id }));
-
-//             inquirer.prompt({
-//                 type: 'list',
-//                 name: 'updateEmplChoose',
-//                 message: 'Which employee do you want to update?',
-//                 choices: employees
-//             }, {
-//                 type: 'list',
-//                 name: 'updateEmplRole',
-//                 message: 'What is the new role?',
-//                 choices: roles
-//             })
-//                 .then(answers => {
-
-//                     console.log("employees " + employees)
-//                     console.log("roles " + roles)
-//                     console.log("answers " + answers)
-//                     console.log("answers.updateEmplChoos " + answers.updateEmplChoose)
-//                     console.log("answers.updateEmplRole " + answers.updateEmplRole)
-
-//                     const sqlUpdate = `SELECT * FROM employees`;
-
-//                     connection.query(sqlUpdate, (err, rows) => {
-//                         if (err) {
-//                             console.log(err);
-//                             return;
-//                         }
-
-//                         console.log(rows);
-//                         connection.end();
-//                     });
-
-//                 });
-//         });
-//     });
-// }
-
+//ends connection
 function quit() {
 
     console.log('Thank you for using the employee tracker, goodbye.')
+    connection.end();
 }
 
-// initial function to begin inquirer prompts
+// call to begin application
 function init() {
 
     inquirer.prompt(menuQuestions)
@@ -376,7 +333,13 @@ function init() {
 
         });
 
-};
+}
+
+// END functions
+
+
+
+
 
 // function call to begin application
 init();
