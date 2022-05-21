@@ -73,7 +73,7 @@ const updateEmplQuestions = [{
     type: 'list',
     name: 'updateEmplChoose',
     message: 'Which employee do you want to update?',
-    choices: ['choice']
+    choices: []
 },
 {
     type: 'list',
@@ -220,28 +220,31 @@ function updateEmpl() {
         }
         const employees = rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
         console.log("we made it to log the employees after rows.map executes" + employees);
-        return
-        // init();
+
+        inquirer.prompt({
+            type: 'list',
+            name: 'updateEmplChoose',
+            message: 'Which employee do you want to update?',
+            choices: employees
+        })
+            .then(answers => {
+
+                console.log("we made it to the connection query for displaying roles")
+                const sql = `SELECT * FROM roles`;
+                connection.query(sql, (err, rows) => {
+                    if (err) {
+                        console.log(err);
+
+                        return;
+                    }
+                    console.log("we made it through the connection query for displaying roles as well " + answers)
+                    console.log("this is the rows displayed " + rows);
+                    return
+                    // init();
+                });
+
+            });
     });
-
-    // inquirer.prompt(updateEmplQuestions)
-    //     .then(answers => {
-
-    //         // select employee, update role, and repopulate database
-    //         // const sql = `UPDATE employees SET roles_id = (${updateEmplRolesArray}) WHERE id = ${updateEmplChoicesArray}`;
-    //         const sql = `SELECT * FROM employees`;
-    //         connection.query(sql, (err, rows) => {
-    //             if (err) {
-    //                 console.log(err);
-
-    //                 return;
-    //             }
-    //             console.log("this is data" + answers)
-    //             console.log(rows);
-    //             init();
-    //         });
-
-    //     });
 
 }
 
