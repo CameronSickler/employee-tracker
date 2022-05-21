@@ -25,6 +25,7 @@ const menuQuestions = [{
         'update an employee role',
         'quit']
 }]
+
 const addDeptQuestions = [{
     type: 'input',
     name: 'newDept',
@@ -72,17 +73,14 @@ const updateEmplQuestions = [{
     type: 'list',
     name: 'updateEmplChoose',
     message: 'Which employee do you want to update?',
-    choices: [updateEmplChoicesArray]
+    choices: ['choice']
 },
 {
     type: 'list',
     name: 'updateEmplRole',
     message: 'What is the new role?',
-    choices: [updateEmplRolesArray]
+    choices: ['choice']
 }]
-
-var updateEmplChoicesArray = []
-var updateEmplRolesArray = []
 
 
 
@@ -210,55 +208,40 @@ function addEmpl() {
         });
 }
 
+// NEEDS TESTING AND WORK
 function updateEmpl() {
 
-    //selects all employees in db
-    const sql1 = `SELECT * FROM employees;`;
-
-    connection.query(sql1, (err, rows) => {
+    const sql = `SELECT * FROM employees`;
+    connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
 
             return;
         }
-        //populates global variable with array of all employees
-        updateEmplChoicesArray.push(rows);
-        console.log(updateEmplChoicesArray)
+        const employees = rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
+        console.log("we made it to log the employees after rows.map executes" + employees);
+        return
+        // init();
     });
 
-    //selects all roles in db
-    const sql2 = `SELECT * FROM roles;`;
+    // inquirer.prompt(updateEmplQuestions)
+    //     .then(answers => {
 
-    connection.query(sql2, (err, rows) => {
-        if (err) {
-            console.log(err);
+    //         // select employee, update role, and repopulate database
+    //         // const sql = `UPDATE employees SET roles_id = (${updateEmplRolesArray}) WHERE id = ${updateEmplChoicesArray}`;
+    //         const sql = `SELECT * FROM employees`;
+    //         connection.query(sql, (err, rows) => {
+    //             if (err) {
+    //                 console.log(err);
 
-            return;
-        }
-        //populates global variable will array of all roles
-        updateEmplRolesArray.push(rows);
-        console.log(updateEmplRolesArray)
+    //                 return;
+    //             }
+    //             console.log("this is data" + answers)
+    //             console.log(rows);
+    //             init();
+    //         });
 
-    });
-
-    inquirer.prompt(updateEmplQuestions)
-        .then(answers => {
-
-            // select employee, update role, and repopulate database
-            const sql = `UPDATE employees SET roles_id = (${updateEmplRolesArray}) WHERE id = ${updateEmplChoicesArray}`;
-
-            connection.query(sql, (err, rows) => {
-                if (err) {
-                    console.log(err);
-
-                    return;
-                }
-
-                console.log(rows);
-                init();
-            });
-
-        });
+    //     });
 
 }
 
