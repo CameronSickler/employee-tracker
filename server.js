@@ -30,6 +30,7 @@ const addDeptQuestions = [{
     name: 'newDept',
     message: 'What is the name of the department you wish to add?',
 }]
+
 const addRoleQuestions = [{
     type: 'input',
     name: 'newRoleTitle',
@@ -45,6 +46,7 @@ const addRoleQuestions = [{
     name: 'newRoleDept',
     message: 'What is the department for the new role?',
 }]
+
 const addEmplQuestions = [{
     type: 'input',
     name: 'newEmplFirstName',
@@ -65,7 +67,22 @@ const addEmplQuestions = [{
     name: 'newEmplDept',
     message: 'What is the department of the new employee?',
 }]
-const updateEmplQuestions = []
+
+const updateEmplQuestions = [{
+    type: 'list',
+    name: 'updateEmplChoose',
+    message: 'Which employee do you want to update?',
+    choices: [updateEmplChoicesArray]
+},
+{
+    type: 'list',
+    name: 'updateEmplRole',
+    message: 'What is the new role?',
+    choices: [updateEmplRolesArray]
+}]
+
+var updateEmplChoicesArray = []
+var updateEmplRolesArray = []
 
 
 
@@ -176,9 +193,10 @@ function addEmpl() {
         .then(answers => {
 
             // should add firstname, lastname, role, and manager
-            const sql = `SELECT * FROM departments;`;
+            const sql = `INSERT INTO roles (first_name, last_name, role_id, department_id) VALUES (?,?,?,?)`;
+            const params = [answers.newEmplFirstName, answers.newEmplLastName, answers.newEmplRole, answers.newEmplDept]
 
-            connection.query(sql, (err, rows) => {
+            connection.query(sql, params, (err, rows) => {
                 if (err) {
                     console.log(err);
 
@@ -194,11 +212,40 @@ function addEmpl() {
 
 function updateEmpl() {
 
+    //selects all employees in db
+    const sql1 = `SELECT * FROM employees;`;
+
+    connection.query(sql1, (err, rows) => {
+        if (err) {
+            console.log(err);
+
+            return;
+        }
+        //populates global variable with array of all employees
+        updateEmplChoicesArray.push(rows);
+        console.log(updateEmplChoicesArray)
+    });
+
+    //selects all roles in db
+    const sql2 = `SELECT * FROM roles;`;
+
+    connection.query(sql2, (err, rows) => {
+        if (err) {
+            console.log(err);
+
+            return;
+        }
+        //populates global variable will array of all roles
+        updateEmplRolesArray.push(rows);
+        console.log(updateEmplRolesArray)
+
+    });
+
     inquirer.prompt(updateEmplQuestions)
         .then(answers => {
 
             // select employee, update role, and repopulate database
-            const sql = `SELECT * FROM departments;`;
+            const sql = `UPDATE employees SET roles_id = (${updateEmplRolesArray}) WHERE id = ${updateEmplChoicesArray}`;
 
             connection.query(sql, (err, rows) => {
                 if (err) {
@@ -212,6 +259,7 @@ function updateEmpl() {
             });
 
         });
+
 }
 
 function quit() {
